@@ -3,13 +3,12 @@
  * Created by PhpStorm.
  * User: Frost Wong <frostwong@gmail.com>
  * Date: 28/05/2017
- * Time: 22:20
+ * Time: 22:22
  */
 
-namespace SubtleFramework;
+namespace SubtleFramework\HttpRequest\Middleware;
 
 
-class HttpRequest
+class Header
 {
-
 }
