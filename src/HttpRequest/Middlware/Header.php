@@ -9,6 +9,25 @@
 namespace SubtleFramework\HttpRequest\Middleware;
 
 
+use Psr\Http\Message\RequestInterface;
+
+/**
+ * Add specific header to request
+ *
+ * @package SubtleFramework\HttpRequest\Middleware
+ */
 class Header
 {
+    public static function commonHeaderHandler()
+    {
+        return function (callable $handler) {
+            return function (
+                RequestInterface $request,
+                array $options
+            ) use ($handler) {
+                $request = $request->withHeader('X-Request-Id', REQUEST_ID);
+                return $handler($request, $options);
+            };
+        };
+    }
 }

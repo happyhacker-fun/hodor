@@ -9,6 +9,7 @@
 namespace SubtleFramework\HttpRequest\Middleware;
 
 
+use Closure;
 use GuzzleHttp\Psr7\Uri;
 use Psr\Http\Message\RequestInterface;
 
@@ -24,7 +25,7 @@ class Replacer
     /**
      * Return handler for guzzle.
      *
-     * @return \Closure
+     * @return Closure
      */
     public static function replaceHandler()
     {
@@ -44,11 +45,13 @@ class Replacer
     }
 
     /**
+     * Translate fields with context.
+     *
      * @param $message
      * @param array $context
      * @return string
      */
-    private static function interpolate($message, array $context = array())
+    private static function interpolate($message, array $context = [])
     {
         $replace = [];
         foreach ($context as $key => $val) {
