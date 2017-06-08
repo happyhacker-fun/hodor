@@ -28,11 +28,17 @@ use SubtleFramework\HttpRequest\Middleware\Retry;
 
 abstract class HttpRequest
 {
+    use ErrorHandlerTrait;
     protected $retryOption = [
         'max' => 5,
         'delay' => 100,
     ];
 
+    /**
+     * Service config, e.g base_uri
+     *
+     * @var array
+     */
     protected $serviceConfig = [];
     protected $apiListConfig = [];
 
@@ -50,6 +56,16 @@ abstract class HttpRequest
      */
     abstract protected function setApiConfig();
 
+    /**
+     * Call remote service
+     *
+     * @param $apiName
+     * @param array $options
+     * @return mixed|null|\Psr\Http\Message\ResponseInterface
+     * @throws ApiNotSetException
+     * @throws BaseUriNotSetException
+     * @throws UriNotSetException
+     */
     public function call($apiName, array $options = [])
     {
         $this->setServiceConfig();
@@ -84,23 +100,34 @@ abstract class HttpRequest
         try {
             $response = $client->send($request, $options);
         } catch (ClientException $e) {
+            $this->writeToErrorLog($e);
             $response = $e->getResponse();
         } catch (ServerException $e) {
+            $this->writeToErrorLog($e);
             $response = $e->getResponse();
         } catch (ConnectException $e) {
+            $this->writeToErrorLog($e);
             $response = null;
         } catch (RequestException $e) {
+            $this->writeToErrorLog($e);
             $response = $e->getResponse();
         } catch (Exception $e) {
+            $this->writeToErrorLog($e);
             $response = null;
         }
 
         return $response;
     }
 
+    /**
+     * Composer handler stack for request
+     *
+     * @param $apiName
+     * @return HandlerStack
+     */
     private function getClientHandlerStack($apiName)
     {
-        $apiRetryOption = isset($this->apiConfig[$apiName]['retry']) ? $this->apiConfig[$apiName]['retry'] : [];
+        $apiRetryOption = isset($this->apiListConfig[$apiName]['retry']) ? $this->apiListConfig[$apiName]['retry'] : [];
         $serviceRetryOption = isset($this->serviceConfig['retry']) ? $this->serviceConfig['retry'] : [];
 
         $retryOption = $apiRetryOption + $serviceRetryOption + $this->retryOption;
