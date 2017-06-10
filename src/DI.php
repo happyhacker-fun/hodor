@@ -18,7 +18,7 @@ use SubtleFramework\Exception\KeyNotExistException;
  */
 class DI
 {
-    protected static $container;
+    protected static $container = [];
 
     /**
      * Make instance of a class in a lazy way
@@ -58,7 +58,7 @@ class DI
     public static function set($key, Callable $callable)
     {
         if (!array_key_exists($key, self::$container)) {
-            self::$container[$key] = $callable;
+            self::$container[$key] = $callable();
         }
     }
 
