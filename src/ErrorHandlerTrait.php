@@ -54,7 +54,7 @@ trait ErrorHandlerTrait
      */
     protected function writeToErrorLog($throwable)
     {
-        $message = 'Guzzle Error:' . PHP_EOL;
+        $message = 'Error:' . PHP_EOL;
         $message .= $this->renderThrowableAsText($throwable);
         while ($throwable = $throwable->getPrevious()) {
             $message .= PHP_EOL . 'Previous error:' . PHP_EOL;
