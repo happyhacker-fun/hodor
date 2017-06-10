@@ -16,12 +16,12 @@ use SubtleFramework\Exception\KeyNotExistException;
  *
  * @package SubtleFramework
  */
-class Container
+class DI
 {
     protected static $container;
 
     /**
-     * Make instance of a class
+     * Make instance of a class in a lazy way
      *
      * @param $className
      * @param array ...$args
@@ -37,6 +37,17 @@ class Container
         return self::$container[$index];
     }
 
+    /**
+     * Make instance of a class in an aggressive way
+     *
+     * @param $className
+     * @param array $args
+     * @return mixed
+     */
+    public static function makeNew($className, ...$args)
+    {
+        return new $className($args);
+    }
 
     /**
      * Put a callable to container with a key
