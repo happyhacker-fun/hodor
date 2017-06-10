@@ -29,7 +29,7 @@ class Database
      * @return Connection
      * @throws ConfigNotSatisfiedException
      */
-    public function makeConnection(ConfigInterface $config)
+    public static function makeConnection(ConfigInterface $config)
     {
         $dbConfig = $config->get();
 
