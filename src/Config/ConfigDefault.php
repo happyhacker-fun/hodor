@@ -6,7 +6,7 @@
  * Time: 12:08
  */
 
-namespace SubtleFramework\Config;
+namespace Hodor\Config;
 
 /**
  * Default implementation of ConfigInterface
@@ -15,11 +15,11 @@ namespace SubtleFramework\Config;
  */
 class ConfigDefault implements ConfigInterface
 {
-    protected $config;
+    private $config;
 
-    public function __construct(array $data = [])
+    public function __construct($config)
     {
-        $this->config = $data;
+        $this->config = $config;
     }
 
     public function get()

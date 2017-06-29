@@ -6,7 +6,7 @@
  * Time: 11:56
  */
 
-namespace SubtleFramework\Database;
+namespace Hodor\Database;
 
 
 use Monolog\Formatter\LineFormatter;

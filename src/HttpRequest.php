@@ -6,7 +6,7 @@
  * Time: 22:20
  */
 
-namespace SubtleFramework;
+namespace Hodor;
 
 
 use Exception;
@@ -18,21 +18,38 @@ use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Request;
-use SubtleFramework\Exception\ApiNotSetException;
-use SubtleFramework\Exception\BaseUriNotSetException;
-use SubtleFramework\Exception\UriNotSetException;
-use SubtleFramework\HttpRequest\Middleware\Header;
-use SubtleFramework\HttpRequest\Middleware\Logger;
-use SubtleFramework\HttpRequest\Middleware\Replacer;
-use SubtleFramework\HttpRequest\Middleware\Retry;
+use Psr\Http\Message\ResponseInterface;
+use Hodor\Exception\ApiNotSetException;
+use Hodor\Exception\BaseUriNotSetException;
+use Hodor\Exception\UriNotSetException;
+use Hodor\HttpRequest\Middleware\Header;
+use Hodor\HttpRequest\Middleware\Logger;
+use Hodor\HttpRequest\Middleware\Replacer;
+use Hodor\HttpRequest\Middleware\Retry;
 
 abstract class HttpRequest
 {
     use ErrorHandlerTrait;
+
+    /**
+     * Default retry options
+     *
+     * @var array
+     */
     protected $retryOption = [
-        'max' => 5,
+        'max' => 2,
         'delay' => 100,
     ];
+
+    /**
+     * Default guzzle options
+     *
+     * @var float
+     */
+    protected $defaultOptions = [
+        'connect_timeout' => 2.0,
+    ];
+
 
     /**
      * Service config, e.g base_uri
@@ -86,37 +103,31 @@ abstract class HttpRequest
             'handler' => $handlerStack,
         ]);
 
-        $serviceHeaders = isset($this->serviceConfig['headers']) ? $this->serviceConfig['headers'] : [];
-        $apiHeaders = isset($apiConfig['headers']) ? $apiConfig['headers'] : [];
-        $headers = $apiHeaders + $serviceHeaders;
-
-        if (!isset($apiConfig['uri'])) {
-            throw new UriNotSetException('uri for ' . $apiName . ' of service is not set yet');
-        }
-        $uri = $apiConfig['uri'];
-
-        $request = new Request($this->serviceConfig['method'], $uri, $headers);
-
-        try {
-            $response = $client->send($request, $options);
-        } catch (ClientException $e) {
-            $this->writeToErrorLog($e);
-            $response = $e->getResponse();
-        } catch (ServerException $e) {
-            $this->writeToErrorLog($e);
-            $response = $e->getResponse();
-        } catch (ConnectException $e) {
-            $this->writeToErrorLog($e);
-            $response = null;
-        } catch (RequestException $e) {
-            $this->writeToErrorLog($e);
-            $response = $e->getResponse();
-        } catch (Exception $e) {
-            $this->writeToErrorLog($e);
-            $response = null;
+        if (!isset($apiConfig['pattern'])) {
+            throw new UriNotSetException('pattern for ' . $apiName . ' of service is not set yet');
         }
 
-        return $response;
+        $pattern = $apiConfig['pattern'];
+        $request = new Request($client, $this->serviceConfig['method'], $pattern, $this->prepareHeaders());
+
+        $response = $this->doSend($client, $request, $options);
+
+        return $this->decode($response);
+    }
+
+    /**
+     * Decode response, should be redefined if needed.
+     *
+     * @param ResponseInterface $response
+     * @return mixed
+     */
+    protected function decode(ResponseInterface $response)
+    {
+        if (null === $response) {
+            return null;
+        }
+
+        return json_decode($response, true);
     }
 
     /**
@@ -145,5 +156,49 @@ abstract class HttpRequest
         }
 
         return $handlerStack;
+    }
+
+    /**
+     * Send the request
+     *
+     * @param Client $client
+     * @param Request $request
+     * @param array $options
+     * @return mixed|null|ResponseInterface
+     */
+    private function doSend(Client $client, Request $request, array $options = [])
+    {
+        try {
+            $response = $client->send($request, $options + $this->defaultOptions);
+        } catch (ClientException $e) {
+            $this->writeToErrorLog($e);
+            $response = $e->getResponse();
+        } catch (ServerException $e) {
+            $this->writeToErrorLog($e);
+            $response = $e->getResponse();
+        } catch (ConnectException $e) {
+            $this->writeToErrorLog($e);
+            $response = null;
+        } catch (RequestException $e) {
+            $this->writeToErrorLog($e);
+            $response = $e->getResponse();
+        } catch (Exception $e) {
+            $this->writeToErrorLog($e);
+            $response = null;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Prepare headers before sending a request
+     *
+     * @return array
+     */
+    private function prepareHeaders()
+    {
+        $serviceHeaders = isset($this->serviceConfig['headers']) ? $this->serviceConfig['headers'] : [];
+        $apiHeaders = isset($apiConfig['headers']) ? $apiConfig['headers'] : [];
+        return $apiHeaders + $serviceHeaders;
     }
 }

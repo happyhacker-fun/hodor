@@ -6,7 +6,7 @@
  * Time: 12:31
  */
 
-namespace SubtleFramework\Exception;
+namespace Hodor\Exception;
 
 
 use Exception;

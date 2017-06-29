@@ -6,7 +6,7 @@
  * Time: 23:22
  */
 
-namespace SubtleFramework\Config;
+namespace Hodor\Config;
 
 
 class Env

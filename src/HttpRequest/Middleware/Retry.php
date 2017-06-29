@@ -6,14 +6,14 @@
  * Time: 22:22
  */
 
-namespace SubtleFramework\HttpRequest\Middleware;
+namespace Hodor\HttpRequest\Middleware;
 
 
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use SubtleFramework\Log;
+use Hodor\Log;
 
 /**
  * Class Retry

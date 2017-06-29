@@ -6,14 +6,14 @@
  * Time: 22:21
  */
 
-namespace SubtleFramework\HttpRequest\Middleware;
+namespace Hodor\HttpRequest\Middleware;
 
 
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\MessageFormatter;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use SubtleFramework\Log;
+use Hodor\Log;
 use function GuzzleHttp\Promise\rejection_for;
 
 class Logger

@@ -6,10 +6,10 @@
  * Time: 12:12
  */
 
-namespace SubtleFramework;
+namespace Hodor;
 
 
-use SubtleFramework\Exception\KeyNotExistException;
+use Hodor\Exception\KeyNotExistException;
 
 /**
  * Global container for objects

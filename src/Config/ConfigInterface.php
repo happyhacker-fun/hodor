@@ -6,12 +6,10 @@
  * Time: 11:49
  */
 
-namespace SubtleFramework\Config;
+namespace Hodor\Config;
 
 
 interface ConfigInterface
 {
-    public function __construct(array $data = []);
-
     public function get();
 }

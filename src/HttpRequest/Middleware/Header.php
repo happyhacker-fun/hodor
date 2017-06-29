@@ -6,7 +6,7 @@
  * Time: 22:22
  */
 
-namespace SubtleFramework\HttpRequest\Middleware;
+namespace Hodor\HttpRequest\Middleware;
 
 
 use Psr\Http\Message\RequestInterface;

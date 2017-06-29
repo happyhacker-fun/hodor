@@ -6,7 +6,7 @@
  * Time: 22:33
  */
 
-namespace SubtleFramework\Exception;
+namespace Hodor\Exception;
 
 
 class BaseUriNotSetException extends \Exception

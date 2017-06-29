@@ -6,7 +6,7 @@
  * Time: 22:21
  */
 
-namespace SubtleFramework\HttpRequest\Middleware;
+namespace Hodor\HttpRequest\Middleware;
 
 
 use Closure;
