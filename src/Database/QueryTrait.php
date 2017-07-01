@@ -22,8 +22,7 @@ trait QueryTrait
             ->table(static::TABLE)
             ->where($where)
             ->orderByDesc('id')
-            ->offset($page)
-            ->take($perPage)
+            ->forPage($page, $perPage)
             ->get();
     }
 

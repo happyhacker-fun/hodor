@@ -9,6 +9,8 @@
 namespace Hodor\Support;
 
 
+use Slim\Http\Request;
+
 class ContentType
 {
     private static $readable = [
@@ -20,4 +22,5 @@ class ContentType
     {
         return in_array($contentType, self::$readable);
     }
+
 }

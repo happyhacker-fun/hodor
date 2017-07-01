@@ -6,7 +6,7 @@
  * Time: 22:20
  */
 
-namespace Hodor;
+namespace Hodor\HttpRequest;
 
 
 use Exception;
@@ -18,16 +18,13 @@ use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Request;
+use Hodor\Support\ErrorHandlerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Hodor\Exception\ApiNotSetException;
 use Hodor\Exception\BaseUriNotSetException;
 use Hodor\Exception\UriNotSetException;
-use Hodor\HttpRequest\Middleware\Header;
-use Hodor\HttpRequest\Middleware\Logger;
-use Hodor\HttpRequest\Middleware\Replacer;
-use Hodor\HttpRequest\Middleware\Retry;
 
-abstract class HttpRequest
+abstract class BaseRequest
 {
     use ErrorHandlerTrait;
 

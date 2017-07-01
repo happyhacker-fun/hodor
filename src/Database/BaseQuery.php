@@ -10,9 +10,10 @@ namespace Hodor\Database;
 
 
 use Hodor\DI;
+use Hodor\IoC;
 use Illuminate\Database\Connection;
 
-abstract class BaseQuery extends DI
+abstract class BaseQuery extends IoC
 {
     /**
      * @return Connection

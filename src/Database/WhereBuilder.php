@@ -22,8 +22,8 @@ class WhereBuilder
     public static function build(array $conditions)
     {
         $where = function (Builder $builder) use ($conditions) {
-            foreach ($conditions as $field => $condition) {
-                $builder->where($field, $condition[0], $condition[1]);
+            foreach ($conditions as $condition) {
+                call_user_func_array([$builder, 'where'], $condition);
             }
         };
 

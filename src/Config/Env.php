@@ -13,6 +13,6 @@ class Env
 {
     const DEV = 'dev';
     const TEST = 'test';
-    const PRE_RELEASE = 'pre_release';
+    const PRE_RELEASE = 'pre';
     const PRODUCT = 'prod';
 }

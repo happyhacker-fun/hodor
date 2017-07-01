@@ -26,8 +26,10 @@ class AccessLog extends BaseMiddleware
     /**
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
+     * @param callable $next
+     * @return mixed
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, Callable $next)
     {
         $requestContext = $this->request($request);
         $responseContext = $this->response($response);
@@ -43,6 +45,8 @@ class AccessLog extends BaseMiddleware
                 'response' => $responseContext,
             ]);
         }
+
+        return $next($request, $response);
     }
 
     private function request(ServerRequestInterface $request)
@@ -59,7 +63,7 @@ class AccessLog extends BaseMiddleware
         $requestContentType = $request->getHeader('Content-Type')[0];
 
         if (ContentType::isReadable($requestContentType)) {
-            $requestContext['body'] = substr((string)$request->getBody(), 1024);
+            $requestContext['body'] = substr((string)$request->getBody(), 0, 1024);
         }
 
         return $requestContext;
@@ -78,7 +82,7 @@ class AccessLog extends BaseMiddleware
 
         $responseContentType = $response->getHeader('Content-Type')[0];
         if (ContentType::isReadable($responseContentType)) {
-            $responseContext['body'] = substr((string)$response->getBody(), 1024);
+            $responseContext['body'] = substr((string)$response->getBody(), 0, 1024);
         }
 
         return $responseContext;

@@ -9,8 +9,8 @@
 namespace Hodor\Middleware;
 
 
-use Hodor\DI;
+use Hodor\IoC;
 
-class BaseMiddleware extends DI
+class BaseMiddleware extends IoC
 {
 }
