@@ -11,10 +11,10 @@ namespace Hodor\Middleware;
 
 use Hodor\Log;
 use Hodor\Support\ContentType;
+use Hodor\Support\IP;
 use Hodor\Support\Timer;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Hodor\Support\IP;
 
 /**
  * Record access log on receiving a request, log body only when it is readable and only log part of it
@@ -29,12 +29,15 @@ class AccessLog extends BaseMiddleware
      * @param callable $next
      * @return mixed
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, Callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $requestContext = $this->request($request);
-        $responseContext = $this->response($response);
+        Timer::start('request');
+        $newResponse = $next($request, $response);
 
-        if ($response->getStatusCode() < 500) {
+        $requestContext = $this->request($request);
+        $responseContext = $this->response($newResponse);
+
+        if ($newResponse->getStatusCode() < 500) {
             Log::info('Request Response', [
                 'request' => $requestContext,
                 'response' => $responseContext,
@@ -46,7 +49,7 @@ class AccessLog extends BaseMiddleware
             ]);
         }
 
-        return $next($request, $response);
+        return $newResponse;
     }
 
     private function request(ServerRequestInterface $request)
@@ -60,10 +63,10 @@ class AccessLog extends BaseMiddleware
             'size' => $request->getBody()->getSize(),
             'headers' => $request->getHeaders(),
         ];
-        $requestContentType = $request->getHeader('Content-Type')[0];
+        $requestContentType = $request->getHeaderLine('Content-Type');
 
         if (ContentType::isReadable($requestContentType)) {
-            $requestContext['body'] = substr((string)$request->getBody(), 0, 1024);
+            $requestContext['body'] = json_decode($request->getBody(), true);
         }
 
         return $requestContext;
@@ -80,9 +83,9 @@ class AccessLog extends BaseMiddleware
             'headers' => $response->getHeaders(),
         ];
 
-        $responseContentType = $response->getHeader('Content-Type')[0];
+        $responseContentType = $response->getHeaderLine('Content-Type');
         if (ContentType::isReadable($responseContentType)) {
-            $responseContext['body'] = substr((string)$response->getBody(), 0, 1024);
+            $responseContext['body'] = json_decode($response->getBody(), true);
         }
 
         return $responseContext;

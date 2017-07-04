@@ -18,7 +18,7 @@ use Psr\Http\Message\RequestInterface;
  */
 class Header
 {
-    public static function commonHeaderHandler()
+    public function __invoke()
     {
         return function (callable $handler) {
             return function (

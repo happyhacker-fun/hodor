@@ -12,7 +12,9 @@ use Hodor\IoC;
 use Hodor\View\Responder;
 
 /**
- * Class BaseController
+ * This class is for user-defined controllers to extend to obtain responder to easily.
+ *
+ * @property Responder responder
  * @package Hodor
  */
 class BaseController extends IoC

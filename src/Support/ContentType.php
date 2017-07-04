@@ -9,8 +9,6 @@
 namespace Hodor\Support;
 
 
-use Slim\Http\Request;
-
 class ContentType
 {
     private static $readable = [
@@ -20,7 +18,8 @@ class ContentType
 
     public static function isReadable($contentType)
     {
-        return in_array($contentType, self::$readable);
+        $c = explode(';', $contentType)[0];
+        return in_array($c, self::$readable);
     }
 
 }

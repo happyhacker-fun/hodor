@@ -11,6 +11,7 @@ namespace Hodor\Database;
 
 use Hodor\Config\ConfigInterface;
 use Hodor\Exception\ConfigNotSatisfiedException;
+use Hodor\Log;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Events\QueryExecuted;

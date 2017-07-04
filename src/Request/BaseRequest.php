@@ -18,6 +18,10 @@ use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Request;
+use Hodor\HttpRequest\Middleware\Header;
+use Hodor\HttpRequest\Middleware\Logger;
+use Hodor\HttpRequest\Middleware\Replacer;
+use Hodor\HttpRequest\Middleware\Retry;
 use Hodor\Support\ErrorHandlerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Hodor\Exception\ApiNotSetException;
@@ -104,8 +108,7 @@ abstract class BaseRequest
             throw new UriNotSetException('pattern for ' . $apiName . ' of service is not set yet');
         }
 
-        $pattern = $apiConfig['pattern'];
-        $request = new Request($client, $this->serviceConfig['method'], $pattern, $this->prepareHeaders());
+        $request = new Request($apiConfig['method'], $apiConfig['pattern'], $this->prepareHeaders());
 
         $response = $this->doSend($client, $request, $options);
 
@@ -124,7 +127,7 @@ abstract class BaseRequest
             return null;
         }
 
-        return json_decode($response, true);
+        return json_decode($response->getBody(), true);
     }
 
     /**
@@ -142,8 +145,8 @@ abstract class BaseRequest
 
         $middlewares = [
             Middleware::retry(Retry::decider($retryOption['max']), Retry::delay($retryOption['delay'])),
-            Replacer::replaceHandler(),
-            Header::commonHeaderHandler(),
+            new Replacer(),
+            new Header(),
             new Logger(),
         ];
 

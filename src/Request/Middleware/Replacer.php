@@ -27,7 +27,7 @@ class Replacer
      *
      * @return Closure
      */
-    public static function replaceHandler()
+    public function __invoke()
     {
         return function (callable $handler) {
             return function (RequestInterface $request, array $options) use ($handler) {
@@ -35,7 +35,7 @@ class Replacer
                     $attributes = $options['attributes'];
                     $uri = (string)$request->getUri();
 
-                    $parsedUri = self::interpolate($uri, $attributes);
+                    $parsedUri = $this->interpolate($uri, $attributes);
 
                     $request = $request->withUri(new Uri($parsedUri), true);
                 }
@@ -51,7 +51,7 @@ class Replacer
      * @param array $context
      * @return string
      */
-    private static function interpolate($message, array $context = [])
+    private function interpolate($message, array $context = [])
     {
         $replace = [];
         foreach ($context as $key => $val) {

@@ -25,13 +25,6 @@ trait Responder
     protected $data = 'data';
     protected $requestId = 'request_id';
 
-    protected  $codes = [
-        10000 => [
-            Language::ZH => '成功',
-            Language::EN => 'OK',
-        ],
-    ];
-
 
     /**
      * Append specific header to response
@@ -83,12 +76,19 @@ trait Responder
         return $this->renderJson($array);
     }
 
+    public function abort($code, ...$params)
+    {
+        return $this->respond(null, $code, ...$params);
+    }
+
     /**
      * @param $data
      * @return Response
      */
     protected function renderJson($data)
     {
+        $data[$this->requestId] = REQUEST_ID;
+
         return $this->response->withJson($data);
     }
 

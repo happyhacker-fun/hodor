@@ -27,6 +27,6 @@ class Timer
 
         unset(self::$now[$name]);
 
-        return $t;
+        return $t . '(ms)';
     }
 }
