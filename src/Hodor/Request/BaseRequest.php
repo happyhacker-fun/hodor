@@ -108,7 +108,7 @@ abstract class BaseRequest
             throw new UriNotSetException('pattern for ' . $apiName . ' of service is not set yet');
         }
 
-        $request = new Request($apiConfig['method'], $apiConfig['pattern'], $this->prepareHeaders());
+        $request = new Request($apiConfig['method'], $apiConfig['pattern'], $this->prepareHeaders($options));
 
         $response = $this->doSend($client, $request, $options);
 
@@ -193,12 +193,13 @@ abstract class BaseRequest
     /**
      * Prepare headers before sending a request
      *
+     * @param array $options
      * @return array
      */
-    private function prepareHeaders()
+    private function prepareHeaders(array $options)
     {
         $serviceHeaders = isset($this->serviceConfig['headers']) ? $this->serviceConfig['headers'] : [];
         $apiHeaders = isset($apiConfig['headers']) ? $apiConfig['headers'] : [];
-        return $apiHeaders + $serviceHeaders;
+        return array_replace_recursive($serviceHeaders, $apiHeaders, $options['headers']);
     }
 }
