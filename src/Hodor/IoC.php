@@ -9,6 +9,7 @@
 namespace Hodor;
 
 
+use Exception;
 use Hodor\Exception\KeyNotExistException;
 use Psr\Container\ContainerInterface;
 
@@ -32,12 +33,26 @@ class IoC
      * @param $className
      * @param array ...$args
      * @return object
+     * @throws Exception
      */
     public function make($className, ...$args)
     {
         $index = md5($className . json_encode($args));
-        if (!$this->ci->has($index) || $this->ci->get($index) === null) {
-            $this->ci[$index] = new $className($args);
+
+        if ($this->ci->has($index) && $this->ci->get($index) !== null) {
+            return $this->ci->get($index);
+        }
+
+        if ($className === __CLASS__) {
+            throw new Exception('Class ' . __CLASS__ . ' can only be  instantiated once.');
+        }
+
+        if (is_subclass_of($className, __CLASS__)) {
+            Log::debug('Instantiating IoC class with index ' . $index, ['className' => $className, 'args' => $args]);
+            $this->ci->$index = new $className($this->ci, ...$args);
+        } else {
+            Log::debug('Instantiating class with index ' . $index, ['className' => $className, 'args' => $args]);
+            $this->ci->$index = new $className(...$args);
         }
 
         return $this->ci->get($index);
@@ -52,7 +67,11 @@ class IoC
      */
     public function makeNew($className, ...$args)
     {
-        return new $className($args);
+        if (is_subclass_of($className, __CLASS__)) {
+            return new $className($this->ci, ...$args);
+        }
+
+        return new $className(...$args);
     }
 
     /**

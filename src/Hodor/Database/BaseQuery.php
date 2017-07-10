@@ -9,7 +9,6 @@
 namespace Hodor\Database;
 
 
-use Hodor\DI;
 use Hodor\IoC;
 use Illuminate\Database\Connection;
 
