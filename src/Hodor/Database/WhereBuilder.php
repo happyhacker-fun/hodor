@@ -11,30 +11,28 @@ namespace Hodor\Database;
 
 use Illuminate\Database\Query\Builder;
 
+/**
+ * Build where closure for Laravel Query Builder to ease the work.
+ * More complicated where should be build manually.
+ */
 class WhereBuilder
 {
-    /**
-     * Build where closure for Laravel Query Builder to ease the work
-     *
-     * @param array $conditions
-     * @param array $ors
-     * @return \Closure
-     */
-    public static function build(array $conditions, array $ors = [])
+
+    public static function build(array $conditions)
     {
-        $where = function (Builder $builder) use ($conditions, $ors) {
+        return function (Builder $builder) use ($conditions) {
             foreach ($conditions as $condition) {
                 call_user_func_array([$builder, 'where'], $condition);
             }
+        };
+    }
 
-            if (empty($ors)) {
-                return;
-            }
-            foreach ($ors as $key => $or) {
-                call_user_func_array([$builder, 'orWhere'], $or);
+    public static function buildOr(array $conditions)
+    {
+        return function (Builder $builder) use ($conditions) {
+            foreach ($conditions as $key => $condition) {
+                call_user_func_array([$builder, 'orWhere'], $condition);
             }
         };
-
-        return $where;
     }
 }
