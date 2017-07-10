@@ -49,10 +49,10 @@ class IoC
 
         if (is_subclass_of($className, __CLASS__)) {
             Log::debug('Instantiating IoC class with index ' . $index, ['className' => $className, 'args' => $args]);
-            $this->ci->$index = new $className($this->ci, ...$args);
+            $this->ci[$index] = new $className($this->ci, ...$args);
         } else {
             Log::debug('Instantiating class with index ' . $index, ['className' => $className, 'args' => $args]);
-            $this->ci->$index = new $className(...$args);
+            $this->ci[$index]  = new $className(...$args);
         }
 
         return $this->ci->get($index);
