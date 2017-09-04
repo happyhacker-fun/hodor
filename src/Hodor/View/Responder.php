@@ -68,10 +68,8 @@ trait Responder
         $array = [];
         $array[$this->code] = $code;
         array_unshift($params, $message);
-        $array[$this->message] = call_user_func_array('sprintf', $params);
+        $array[$this->message] = sprintf(...$params);
         $array[$this->data] = $data;
-
-//        $acceptedContentType = $this->request->getHeader('Accept')[0];
 
         return $this->renderJson($array);
     }

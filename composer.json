@@ -24,7 +24,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Hodor\\": "src/Hodor/"
+            "Hodor\\": "src/Hodor/",
+            "App\\": "app/src/"
         }
     }
 }

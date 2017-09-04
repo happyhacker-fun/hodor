@@ -9,7 +9,16 @@
 namespace App\Controller;
 
 
-class HelloController
-{
+use Hodor\Controller\BaseController;
+use Slim\Http\Request;
+use Slim\Http\Response;
 
+class HelloController extends BaseController
+{
+    public function world(Request $request, Response $response)
+    {
+        return $response->withJson([
+            'ab' => 'cd',
+        ]);
+    }
 }
